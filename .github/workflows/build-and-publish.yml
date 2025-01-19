@@ -34,12 +34,13 @@ jobs:
       - name: Build APK
         run: flutter build apk --release
 
-      - name: Sign APK
-        env:
-          KEYSTORE_PASSWORD: ${{ secrets.KEYSTORE_PASSWORD }}
-          KEY_PASSWORD: ${{ secrets.KEY_PASSWORD }}
+      - name: Setup Android Signing
+        if: startsWith(matrix.platform,'android')
         run: |
-          jarsigner -verbose -sigalg SHA256withRSA -digestalg SHA-256 -keystore android/app/upload-keystore.jks build/app/outputs/flutter-apk/app-release-unsigned.apk key_alias
+          echo "${{ secrets.KEYSTORE }}" | base64 --decode > android/app/upload-keystore.jks
+          echo "keyAlias=${{ secrets.KEY_ALIAS }}" >> android/local.properties
+          echo "storePassword=${{ secrets.STORE_PASSWORD }}" >> android/local.properties
+          echo "keyPassword=${{ secrets.KEY_PASSWORD }}" >> android/local.properties
 
       - name: Align APK
         run: |
