@@ -37,7 +37,7 @@ jobs:
       - name: Setup Android Signing
         if: startsWith(matrix.platform,'android')
         run: |
-          echo "${{ secrets.KEYSTORE }}" | base64 --decode > android/app/upload-keystore.jks build/app/outputs/flutter-apk/app-release-unsigned.apk key_alias
+          echo "${{ secrets.KEYSTORE }}" | base64 --decode > android/app/upload-keystore.jks build/app/outputs/flutter-apk/app-release-unsigned.apk
           echo "keyAlias=${{ secrets.KEY_ALIAS }}" >> android/local.properties
           echo "storePassword=${{ secrets.STORE_PASSWORD }}" >> android/local.properties
           echo "keyPassword=${{ secrets.KEY_PASSWORD }}" >> android/local.properties
