@@ -31,8 +31,15 @@ jobs:
       - name: Install dependencies
         run: flutter pub get
 
+      - name: Set up Keystore for signing
+        run: |
+          echo "$ANDROID_KEYSTORE" | base64 --decode > android/app/upload-keystore.jks
+          echo "storePassword=$ANDROID_KEYSTORE_PASSWORD" > android/key.properties
+          echo "keyAlias=$ANDROID_KEY_ALIAS" >> android/key.properties
+          echo "keyPassword=$ANDROID_KEY_PASSWORD" >> android/key.properties
+
       - name: Build APK
-        run: flutter build apk --release
+        run: flutter build apk --release --no-codesign
 
       - name: Create Release
         id: create_release
