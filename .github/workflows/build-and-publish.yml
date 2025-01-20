@@ -41,8 +41,6 @@ jobs:
           echo "keyAlias=$ANDROID_KEY_ALIAS" >> android/key.properties
           echo "keyPassword=$ANDROID_KEY_PASSWORD" >> android/key.properties
 
-      
-
       - name: Upload release APK
         uses: actions/upload-release-asset@v1
         with:
