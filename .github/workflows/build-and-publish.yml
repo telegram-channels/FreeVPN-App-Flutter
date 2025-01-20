@@ -39,7 +39,7 @@ jobs:
           echo "keyPassword=$ANDROID_KEY_PASSWORD" >> android/key.properties
 
       - name: Build APK
-        run: flutter build apk --release --no-codesign
+        run: flutter build apk --release 
 
       - name: Create Release
         id: create_release
