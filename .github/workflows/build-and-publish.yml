@@ -46,14 +46,13 @@ jobs:
           rm -f build/app/outputs/flutter-apk/app-release.apk
 
       - name: Zipalign APK
-        run:  |
+        run: |
           ${ANDROID_HOME}/build-tools/30.0.3/zipalign -v 4 build/app/outputs/flutter-apk/app-release-unsigned.apk build/app/outputs/flutter-apk/app-release.apk
-          shell: /usr/bin/bash -e {0}
         env:
           JAVA_HOME: /opt/hostedtoolcache/Java_Zulu_jdk/11.0.25-9/x64
           FLUTTER_ROOT: /opt/hostedtoolcache/flutter/stable-3.27.2-x64
           PUB_CACHE: /home/runner/.pub-cache
-    
+
       - name: Upload release APK
         uses: actions/upload-release-asset@v1
         with:
@@ -61,24 +60,3 @@ jobs:
           asset_path: build/app/outputs/flutter-apk/app-release.apk
           asset_name: app-release.apk
           asset_content_type: application/vnd.android.package-archive
-
-  upload-release:
-    if: ${{ !contains(github.ref, '+') }}
-    needs: build
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v2
-        with:
-          fetch-depth: 0
-
-      - name: Download Artifact
-        uses: actions/download-artifact@v2
-        with:
-          name: build-artifact
-
-      - name: Create Release
-        uses: softprops/action-gh-release@v1
-        with:
-          files: build/app/outputs/flutter-apk/app-release.apk
-          body_path: release.md
