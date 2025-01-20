@@ -35,8 +35,38 @@ jobs:
         run: |
           mkdir -p apk_artifacts
           cp build/app/outputs/flutter-apk/app-release.apk apk_artifacts/app-release-${{ github.run_number }}.apk
-        # 将 APK 文件保存为 artifact
         uses: actions/upload-artifact@v2
         with:
           name: release-apk
           path: apk_artifacts
+
+      - name: Check if release already exists
+        id: check_release
+        run: |
+          tag_name="${{ github.ref }}"
+          existing_release=$(curl -s -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" https://api.github.com/repos/${{ github.repository }}/releases/tags/$tag_name)
+          if [[ -n $existing_release ]]; then
+            echo "::set-output name=release_exists::true"
+          else
+            echo "::set-output name=release_exists::false"
+          fi
+
+      - name: Create Release
+        if: steps.check_release.outputs.release_exists != 'true'
+        id: create_release
+        uses: softprops/action-gh-release@v1
+        with:
+          tag_name: ${{ github.ref }}
+          release_name: Release ${{ github.ref }}
+          files: build/app/outputs/flutter-apk/app-release.apk
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Upload release APK
+        if: steps.check_release.outputs.release_exists != 'true'
+        uses: actions/upload-release-asset@v1
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: build/app/outputs/flutter-apk/app-release.apk
+          asset_name: app-release.apk
+          asset_content_type: application/vnd.android.package-archive
