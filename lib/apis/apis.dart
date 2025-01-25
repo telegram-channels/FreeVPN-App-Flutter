@@ -15,7 +15,7 @@ class APIs {
     final List<Vpn> vpnList = [];
 
     try {
-      final res = await get(Uri.parse('https://rfgtefed.nodeshare.xyz/'));
+      final res = await get(Uri.parse('https://ggthrh.88cloud.us.kg'));
       final csvString = res.body.split("#")[1].replaceAll('*', '');
 
       List<List<dynamic>> list = const CsvToListConverter().convert(csvString);
